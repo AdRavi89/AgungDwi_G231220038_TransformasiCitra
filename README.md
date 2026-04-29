@@ -1,9 +1,17 @@
+Sudah sangat bagus! Saya telah merapikan sedikit format Markdown-nya agar blok kodenya (syntax highlighting) muncul dengan benar di GitHub, memperbaiki struktur navigasi, dan melengkapi kalimat terakhir yang terpotong.
+
+Berikut adalah versi **README.md** yang sudah dikoreksi dan dioptimalkan:
+
+---
+
+```markdown
 # 🖼️ Computer Vision Pipeline: Geometric Transformation
 
 Aplikasi web berbasis Python untuk melakukan pengolahan citra digital secara otomatis. Aplikasi ini mengambil 25 gambar dari **Unsplash API**, melakukan pre-processing ke **Grayscale**, dan menerapkan **7 jenis transformasi geometris** secara real-time.
 
-# Uji Coba
-https://tugas2projectcv.streamlit.app/ 
+## 🌐 Link Uji Coba
+Aplikasi dapat diakses secara langsung melalui:
+👉 [https://tugas2projectcv.streamlit.app/](https://tugas2projectcv.streamlit.app/)
 
 ---
 
@@ -44,44 +52,69 @@ Setiap fungsi menggunakan manipulasi matriks yang ditampilkan secara transparan 
 | **Requests** | Handling HTTP request ke Unsplash API. |
 | **Pillow (PIL)** | Konversi format byte gambar ke array yang didukung OpenCV. |
 
+---
 
 ## 📂 Struktur File Proyek
-Plaintext
+
+```text
 tugas2_project_cv/
 ├── app.py              # File utama aplikasi Streamlit
 ├── requirements.txt    # Daftar library (Gunakan opencv-python-headless untuk Cloud)
 └── README.md           # Dokumentasi proyek
+```
 
-## Bagian Coding: Output Hasil Transformasi
-Bagian ini berada di Step 3 di dalam sistem Tabs. Berikut adalah potongan kode spesifik untuk setiap transformasinya:
+---
 
-## Translasi (Pergeseran):
+## 💻 Implementasi Kode: Transformasi Geometris
+
+Bagian ini berada di **Step 3** di dalam sistem Tabs. Berikut adalah potongan kode spesifik untuk setiap transformasinya:
+
+### 1. Translasi (Pergeseran)
+```python
 M = np.float32([[1, 0, 50], [0, 1, 30]]) # Matriks translasi
 res = [cv2.warpAffine(img, M, (img.shape[1], img.shape[0])) for img in st.session_state.gray_images]
+```
 
-## Rotasi (Perputaran):
+### 2. Rotasi (Perputaran)
+```python
 M = cv2.getRotationMatrix2D((cols/2, rows/2), 45, 1) # Matriks rotasi 45 derajat
 res = [cv2.warpAffine(img, M, (cols, rows)) for img in st.session_state.gray_images]
+```
 
-## Scaling (Perubahan Ukuran):
+### 3. Scaling (Perubahan Ukuran)
+```python
 # fx dan fy = 0.7 berarti pengecilan ke 70%
 res = [cv2.resize(img, None, fx=0.7, fy=0.7) for img in st.session_state.gray_images]
+```
 
-## Shearing (Kemiringan):
+### 4. Shearing (Kemiringan)
+```python
 M = np.float32([[1, 0.2, 0], [0, 1, 0]]) # Matriks kemiringan sumbu X
 res = [cv2.warpAffine(img, M, (int(img.shape[1]*1.2), img.shape[0])) for img in st.session_state.gray_images]
+```
 
-## Refleksi (Pencerminan):
+### 5. Refleksi (Pencerminan)
+```python
 # flipCode 1 = Horizontal
 res = [cv2.flip(img, 1) for img in st.session_state.gray_images]
+```
 
-## Transformasi Affine:
+### 6. Transformasi Affine
+```python
 # Menghitung matriks dari 3 titik asal ke 3 titik tujuan
 M = cv2.getAffineTransform(pts1, pts2)
 res = [cv2.warpAffine(img, M, (img.shape[1], img.shape[0])) for img in st.session_state.gray_images]
+```
 
-## Transformasi Proyektif (Perspektif):
+### 7. Transformasi Proyektif (Perspektif)
+```python
 # Menggunakan warpPerspective untuk efek 3D/sudut pandang berbeda
 M = cv2.getPerspectiveTransform(pts1, pts2)
 res = [cv2.warpPerspective(img, M, (300, 300)) for img in st.session_state.gray_images]
-Catatan: Semua hasil transformasi di atas dikirim ke fungsi
+```
+
+> **Catatan:** Semua hasil transformasi di atas dikirim ke fungsi `render_transformation` untuk ditampilkan dalam grid 5x5 lengkap dengan matriks transformasinya sebagai detail teknis bagi pengguna.
+
+---
+**Dibuat untuk Tugas Project Computer Vision - 2026**
+```
