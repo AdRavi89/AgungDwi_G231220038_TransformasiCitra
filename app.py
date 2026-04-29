@@ -37,7 +37,6 @@ def download_images(api_key, keyword):
 # --- UI SIDEBAR ---
 with st.sidebar:
     st.header("Step 1: Cari Data")
-    # Memperbaiki bagian input API Key agar menggunakan Access Key Anda sebagai default
     api_key = st.text_input(
         "Unsplash Access Key", 
         value="O4Yjpp6s-D80BLS2h0RI9GEbUz-v-5eHeu0-Bj9quyc", 
@@ -49,34 +48,32 @@ with st.sidebar:
         if api_key:
             with st.spinner("Sedang mengunduh..."):
                 st.session_state.raw_images = download_images(api_key, keyword)
-                st.session_state.gray_images = [] # Reset grayscale jika cari baru
+                st.session_state.gray_images = [] 
         else:
             st.warning("Masukkan API Key!")
 
 # --- MAIN CONTENT ---
 st.title("🛠️ Computer Vision Pipeline: Transformasi Geometris")
 
-# DISPLAY ORIGINAL
+# 1. DISPLAY ORIGINAL
 if st.session_state.raw_images:
     st.subheader("1. Hasil Download (Original RGB)")
     cols = st.columns(5)
     for idx, img in enumerate(st.session_state.raw_images):
         cols[idx % 5].image(img, channels="BGR", use_container_width=True, caption=f"Original {idx+1}")
 
-    # BUTTON GRAYSCALE
     st.divider()
     st.header("Step 2: Pre-processing")
     if st.button("✨ Klik Ubah ke Grayscale"):
         st.session_state.gray_images = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in st.session_state.raw_images]
 
-# DISPLAY GRAYSCALE
+# 2. DISPLAY GRAYSCALE & TRANSFORMASI
 if st.session_state.gray_images:
     st.subheader("2. Hasil Grayscale (Frame Tersendiri)")
     cols_g = st.columns(5)
     for idx, img in enumerate(st.session_state.gray_images):
         cols_g[idx % 5].image(img, use_container_width=True, caption=f"Grayscale {idx+1}")
 
-    # STEP 3: TRANSFORMASI
     st.divider()
     st.header("Step 3: Function Transformasi Geometris Citra")
     
@@ -85,6 +82,7 @@ if st.session_state.gray_images:
         "Refleksi", "Affine", "Proyektif"
     ])
 
+    # FUNGSI RENDER (Didefinisikan di luar perulangan tab)
     def render_transformation(images, matrix, description):
         st.markdown(f"### Detail Transformasi")
         col_text, col_mat = st.columns([2, 1])
@@ -98,9 +96,9 @@ if st.session_state.gray_images:
         st.write("**Hasil Visual:**")
         grid = st.columns(5)
         for i, im in enumerate(images):
-            grid[i % 5].image(im, use_container_width=True)
+            grid[i % 5].image(im, use_container_width=True, caption=f"Hasil {i+1}")
 
-    # Implementasi Tiap Tab
+    # IMPLEMENTASI TIAP TAB (Sejajar dengan definisi fungsi render)
     with tabs[0]: # Translasi
         M = np.float32([[1, 0, 50], [0, 1, 30]])
         res = [cv2.warpAffine(img, M, (img.shape[1], img.shape[0])) for img in st.session_state.gray_images]
@@ -109,7 +107,7 @@ if st.session_state.gray_images:
     with tabs[1]: # Rotasi
         rows, cols = st.session_state.gray_images[0].shape
         M = cv2.getRotationMatrix2D((cols/2, rows/2), 45, 1)
-        res = [cv2.warpAffine(img, M, (cols, rows)) for idx, img in enumerate(st.session_state.gray_images)]
+        res = [cv2.warpAffine(img, M, (cols, rows)) for img in st.session_state.gray_images]
         render_transformation(res, M, "Memutar citra sebesar 45 derajat terhadap titik pusat.")
 
     with tabs[2]: # Scaling
