@@ -6,7 +6,7 @@ from PIL import Image
 from io import BytesIO
 
 # --- KONFIGURASI HALAMAN ---
-st.set_page_config(page_title="CV Pipeline Pro", layout="wide")
+st.set_page_config(page_title="CV Pipeline", layout="wide")
 
 # --- INITIALIZE SESSION STATE ---
 # Digunakan agar gambar tetap tersimpan di memori saat kita berpindah tombol/tab
@@ -36,6 +36,7 @@ def download_images(api_key, keyword):
 with st.sidebar:
     st.header("Step 1: Cari Data")
     api_key = st.text_input("Unsplash Access Key", type="password")
+    copy ini  = st.text_input("O4Yjpp6s-D80BLS2h0RI9GEbUz-v-5eHeu0-Bj9quyc")
     keyword = st.text_input("Keyword Gambar", value="industrial")
     if st.button("Cari & Download 25 Gambar"):
         if api_key:
