@@ -1,8 +1,3 @@
-Sudah sangat bagus! Saya telah merapikan sedikit format Markdown-nya agar blok kodenya (syntax highlighting) muncul dengan benar di GitHub, memperbaiki struktur navigasi, dan melengkapi kalimat terakhir yang terpotong.
-
-Berikut adalah versi **README.md** yang sudah dikoreksi dan dioptimalkan:
-
----
 
 ```markdown
 # 🖼️ Computer Vision Pipeline: Geometric Transformation
