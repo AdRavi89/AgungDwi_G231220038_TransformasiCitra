@@ -6,7 +6,7 @@ Aplikasi web berbasis Python untuk melakukan pengolahan citra digital secara oto
 
 ## 🌐 Link Uji Coba
 Aplikasi dapat diakses secara langsung melalui:
-👉 [https://tugas2projectcv.streamlit.app/](https://tugas2projectcv.streamlit.app/)
+👉 (https://tugas2projectcv.streamlit.app/)
 
 ---
 
