@@ -48,7 +48,7 @@ Setiap fungsi menggunakan manipulasi matriks yang ditampilkan secara transparan 
 | **Pillow (PIL)** | Konversi format byte gambar ke array yang didukung OpenCV. |
 
 ---
-
+```margin
 ## 📂 Struktur File Proyek
 tugas2_project_cv/
 ├── app.py              # File utama aplikasi Streamlit
