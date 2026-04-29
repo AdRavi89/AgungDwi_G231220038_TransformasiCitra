@@ -9,7 +9,6 @@ from io import BytesIO
 st.set_page_config(page_title="CV Pipeline", layout="wide")
 
 # --- INITIALIZE SESSION STATE ---
-# Digunakan agar gambar tetap tersimpan di memori saat kita berpindah tombol/tab
 if 'raw_images' not in st.session_state:
     st.session_state.raw_images = []
 if 'gray_images' not in st.session_state:
@@ -22,10 +21,13 @@ def download_images(api_key, keyword):
         response = requests.get(url)
         data = response.json()
         imgs = []
+        if 'results' not in data:
+            st.error("Gagal mendapatkan data. Cek API Key Anda.")
+            return []
+            
         for item in data.get('results', []):
             img_res = requests.get(item['urls']['small'])
             img_pill = Image.open(BytesIO(img_res.content)).convert('RGB')
-            # Simpan dalam format BGR untuk OpenCV
             imgs.append(cv2.cvtColor(np.array(img_pill), cv2.COLOR_RGB2BGR))
         return imgs
     except Exception as e:
@@ -35,9 +37,14 @@ def download_images(api_key, keyword):
 # --- UI SIDEBAR ---
 with st.sidebar:
     st.header("Step 1: Cari Data")
-    api_key = st.text_input("Unsplash Access Key", type="password")
-    copy ini  = st.text_input("O4Yjpp6s-D80BLS2h0RI9GEbUz-v-5eHeu0-Bj9quyc")
+    # Memperbaiki bagian input API Key agar menggunakan Access Key Anda sebagai default
+    api_key = st.text_input(
+        "Unsplash Access Key", 
+        value="O4Yjpp6s-D80BLS2h0RI9GEbUz-v-5eHeu0-Bj9quyc", 
+        type="password"
+    )
     keyword = st.text_input("Keyword Gambar", value="industrial")
+    
     if st.button("Cari & Download 25 Gambar"):
         if api_key:
             with st.spinner("Sedang mengunduh..."):
@@ -73,13 +80,11 @@ if st.session_state.gray_images:
     st.divider()
     st.header("Step 3: Function Transformasi Geometris Citra")
     
-    # Membuat tab untuk masing-masing fungsi transformasi
     tabs = st.tabs([
         "Translasi", "Rotasi", "Scaling", "Shearing", 
         "Refleksi", "Affine", "Proyektif"
     ])
 
-    # Fungsi untuk merender hasil transformasi dalam grid
     def render_transformation(images, matrix, description):
         st.markdown(f"### Detail Transformasi")
         col_text, col_mat = st.columns([2, 1])
@@ -104,12 +109,12 @@ if st.session_state.gray_images:
     with tabs[1]: # Rotasi
         rows, cols = st.session_state.gray_images[0].shape
         M = cv2.getRotationMatrix2D((cols/2, rows/2), 45, 1)
-        res = [cv2.warpAffine(img, M, (cols, rows)) for img in st.session_state.gray_images]
+        res = [cv2.warpAffine(img, M, (cols, rows)) for idx, img in enumerate(st.session_state.gray_images)]
         render_transformation(res, M, "Memutar citra sebesar 45 derajat terhadap titik pusat.")
 
     with tabs[2]: # Scaling
         res = [cv2.resize(img, None, fx=0.7, fy=0.7) for img in st.session_state.gray_images]
-        render_transformation(res, "Resize (0.7x)", "Mengecilkan citra menjadi 70% dari ukuran aslinya.")
+        render_transformation(res, None, "Mengecilkan citra menjadi 70% dari ukuran aslinya.")
 
     with tabs[3]: # Shearing
         M = np.float32([[1, 0.2, 0], [0, 1, 0]])
