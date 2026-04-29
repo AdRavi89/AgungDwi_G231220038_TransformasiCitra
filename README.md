@@ -50,8 +50,6 @@ Setiap fungsi menggunakan manipulasi matriks yang ditampilkan secara transparan 
 ---
 
 ## 📂 Struktur File Proyek
-
-```text
 tugas2_project_cv/
 ├── app.py              # File utama aplikasi Streamlit
 ├── requirements.txt    # Daftar library (Gunakan opencv-python-headless untuk Cloud)
@@ -109,7 +107,3 @@ res = [cv2.warpPerspective(img, M, (300, 300)) for img in st.session_state.gray_
 ```
 
 > **Catatan:** Semua hasil transformasi di atas dikirim ke fungsi `render_transformation` untuk ditampilkan dalam grid 5x5 lengkap dengan matriks transformasinya sebagai detail teknis bagi pengguna.
-
----
-**Dibuat untuk Tugas Project Computer Vision - 2026**
-```
