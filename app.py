@@ -1,12 +1,11 @@
 import streamlit as st
 import cv2
 import numpy as np
-import requests
+import os
 from PIL import Image
-from io import BytesIO
 
 # --- KONFIGURASI HALAMAN ---
-st.set_page_config(page_title="CV Pipeline", layout="wide")
+st.set_page_config(page_title="CV Pipeline - Local Mode", layout="wide")
 
 # --- INITIALIZE SESSION STATE ---
 if 'raw_images' not in st.session_state:
@@ -14,50 +13,53 @@ if 'raw_images' not in st.session_state:
 if 'gray_images' not in st.session_state:
     st.session_state.gray_images = []
 
-# --- FUNGSI HELPER ---
-def download_images(api_key, keyword):
-    url = f"https://api.unsplash.com/search/photos?query={keyword}&per_page=25&client_id={api_key}"
-    try:
-        response = requests.get(url)
-        data = response.json()
-        imgs = []
-        if 'results' not in data:
-            st.error("Gagal mendapatkan data. Cek API Key Anda.")
-            return []
-            
-        for item in data.get('results', []):
-            img_res = requests.get(item['urls']['small'])
-            img_pill = Image.open(BytesIO(img_res.content)).convert('RGB')
-            imgs.append(cv2.cvtColor(np.array(img_pill), cv2.COLOR_RGB2BGR))
-        return imgs
-    except Exception as e:
-        st.error(f"Error: {e}")
+# --- FUNGSI HELPER LOKAL ---
+def load_local_images(folder_path):
+    imgs = []
+    valid_extensions = ('.jpg', '.jpeg', '.png', '.webp')
+    
+    if not os.path.exists(folder_path):
+        st.error(f"Folder '{folder_path}' tidak ditemukan!")
         return []
+
+    # Mengambil list file dan filter hanya gambar
+    files = [f for f in os.listdir(folder_path) if f.lower().endswith(valid_extensions)]
+    
+    if len(files) == 0:
+        st.warning(f"Tidak ada gambar di dalam folder '{folder_path}'")
+        return []
+
+    # Ambil maksimal 25 gambar
+    files = files[:25]
+    
+    for file_name in files:
+        img_path = os.path.join(folder_path, file_name)
+        # Baca gambar menggunakan OpenCV
+        img = cv2.imread(img_path)
+        if img is not None:
+            imgs.append(img)
+            
+    return imgs
 
 # --- UI SIDEBAR ---
 with st.sidebar:
-    st.header("Step 1: Cari Data")
-    api_key = st.text_input(
-        "Unsplash Access Key", 
-        value="O4Yjpp6s-D80BLS2h0RI9GEbUz-v-5eHeu0-Bj9quyc", 
-        type="password"
-    )
-    keyword = st.text_input("Keyword Gambar", value="industrial")
+    st.header("Step 1: Load Data Lokal")
+    folder_input = st.text_input("Nama Folder Gambar", value="images")
+    st.info("Pastikan folder ini ada di direktori proyek Anda.")
     
-    if st.button("Cari & Download 25 Gambar"):
-        if api_key:
-            with st.spinner("Sedang mengunduh..."):
-                st.session_state.raw_images = download_images(api_key, keyword)
-                st.session_state.gray_images = [] 
-        else:
-            st.warning("Masukkan API Key!")
+    if st.button("📥 Load 25 Gambar dari Folder"):
+        with st.spinner("Membaca file lokal..."):
+            st.session_state.raw_images = load_local_images(folder_input)
+            st.session_state.gray_images = [] # Reset grayscale
+            if st.session_state.raw_images:
+                st.success(f"Berhasil memuat {len(st.session_state.raw_images)} gambar.")
 
 # --- MAIN CONTENT ---
-st.title("🛠️ Computer Vision Pipeline: Transformasi Geometris")
+st.title("🛠️ Computer Vision Pipeline: Transformasi Geometris (Local)")
 
 # 1. DISPLAY ORIGINAL
 if st.session_state.raw_images:
-    st.subheader("1. Hasil Download (Original RGB)")
+    st.subheader("1. Hasil Load Folder (Original RGB)")
     cols = st.columns(5)
     for idx, img in enumerate(st.session_state.raw_images):
         cols[idx % 5].image(img, channels="BGR", use_container_width=True, caption=f"Original {idx+1}")
@@ -82,7 +84,6 @@ if st.session_state.gray_images:
         "Refleksi", "Affine", "Proyektif"
     ])
 
-    # FUNGSI RENDER (Didefinisikan di luar perulangan tab)
     def render_transformation(images, matrix, description):
         st.markdown(f"### Detail Transformasi")
         col_text, col_mat = st.columns([2, 1])
@@ -98,7 +99,7 @@ if st.session_state.gray_images:
         for i, im in enumerate(images):
             grid[i % 5].image(im, use_container_width=True, caption=f"Hasil {i+1}")
 
-    # IMPLEMENTASI TIAP TAB (Sejajar dengan definisi fungsi render)
+    # IMPLEMENTASI TIAP TAB
     with tabs[0]: # Translasi
         M = np.float32([[1, 0, 50], [0, 1, 30]])
         res = [cv2.warpAffine(img, M, (img.shape[1], img.shape[0])) for img in st.session_state.gray_images]
