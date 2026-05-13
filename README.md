@@ -1,17 +1,12 @@
-Sudah sangat bagus! Saya telah merapikan sedikit format Markdown-nya agar blok kodenya (syntax highlighting) muncul dengan benar di GitHub, memperbaiki struktur navigasi, dan melengkapi kalimat terakhir yang terpotong.
 
-Berikut adalah versi **README.md** yang sudah dikoreksi dan dioptimalkan:
 
----
-
-```markdown
 # 🖼️ Computer Vision Pipeline: Geometric Transformation
 
 Aplikasi web berbasis Python untuk melakukan pengolahan citra digital secara otomatis. Aplikasi ini mengambil 25 gambar dari **Unsplash API**, melakukan pre-processing ke **Grayscale**, dan menerapkan **7 jenis transformasi geometris** secara real-time.
 
 ## 🌐 Link Uji Coba
 Aplikasi dapat diakses secara langsung melalui:
-👉 [https://tugas2projectcv.streamlit.app/](https://tugas2projectcv.streamlit.app/)
+👉 (https://tugas2projectcv.streamlit.app/)
 
 ---
 
@@ -53,10 +48,8 @@ Setiap fungsi menggunakan manipulasi matriks yang ditampilkan secara transparan 
 | **Pillow (PIL)** | Konversi format byte gambar ke array yang didukung OpenCV. |
 
 ---
-
+```margin
 ## 📂 Struktur File Proyek
-
-```text
 tugas2_project_cv/
 ├── app.py              # File utama aplikasi Streamlit
 ├── requirements.txt    # Daftar library (Gunakan opencv-python-headless untuk Cloud)
@@ -114,7 +107,3 @@ res = [cv2.warpPerspective(img, M, (300, 300)) for img in st.session_state.gray_
 ```
 
 > **Catatan:** Semua hasil transformasi di atas dikirim ke fungsi `render_transformation` untuk ditampilkan dalam grid 5x5 lengkap dengan matriks transformasinya sebagai detail teknis bagi pengguna.
-
----
-**Dibuat untuk Tugas Project Computer Vision - 2026**
-```
