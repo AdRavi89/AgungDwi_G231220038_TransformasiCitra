@@ -15,8 +15,8 @@ Aplikasi dapat diakses secara langsung melalui:
 Aplikasi ini dirancang dengan alur kerja sekuensial (Step-by-Step) untuk memudahkan pengguna memahami proses pengolahan citra:
 
 ### 1. Tahap Input (Data Acquisition)
-* **Deskripsi:** Pengguna memasukkan kata kunci dan API Key di sidebar.
-* **Proses:** Aplikasi memanggil Unsplash API dan mengunduh 25 citra digital dalam format BGR.
+* **Deskripsi:** Pengguna memasukkan image yang diinginkan ke folder images
+* **Proses:** Aplikasi memanggil dan mengunggah 25 citra digital dalam format BGR.
 * **Tampilan:** Gambar ditampilkan dalam grid 5x5 dengan keterangan nomor urut (Original 1-25).
 
 ### 2. Pre-processing (Grayscale Conversion)
@@ -50,7 +50,7 @@ Setiap fungsi menggunakan manipulasi matriks yang ditampilkan secara transparan 
 ---
 ```margin
 ## 📂 Struktur File Proyek
-tugas2_project_cv/
+AgungDwi_G231220038_TransformasiCitra/
 ├── app.py              # File utama aplikasi Streamlit
 ├── requirements.txt    # Daftar library (Gunakan opencv-python-headless untuk Cloud)
 └── README.md           # Dokumentasi proyek
